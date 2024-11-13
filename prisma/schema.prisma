@@ -1,0 +1,81 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model book_room {
+  id                 Int       @id @default(autoincrement())
+  room_id            Int?
+  check_in_datetime  DateTime? @default(now()) @db.Timestamp(0)
+  check_out_datetime DateTime? @default(now()) @db.Timestamp(0)
+  quantity_of_people Int?
+  booking_user       Int?
+  rooms              rooms?    @relation(fields: [room_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "book_room_ibfk_1")
+  users              users?    @relation(fields: [booking_user], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "book_room_ibfk_2")
+
+  @@index([booking_user], map: "booking_user")
+  @@index([room_id], map: "room_id")
+}
+
+model comments {
+  id           Int       @id @default(autoincrement())
+  working_code Int?
+  comment_code Int?
+  comment_date DateTime? @default(now()) @db.Timestamp(0)
+  description  String?   @db.Text
+  stars        Int?
+}
+
+model location {
+  id            Int     @id @default(autoincrement())
+  location_name String? @db.VarChar(255)
+  province      String? @db.VarChar(255)
+  country       String? @db.VarChar(255)
+  images        String? @db.VarChar(255)
+}
+
+model rooms {
+  id              Int         @id @default(autoincrement())
+  room_name       String?     @db.VarChar(255)
+  passenger_id    Int?
+  room_number     Int?
+  bed             Int?
+  bathroom        Int?
+  description     String?     @db.Text
+  price           Int?
+  laundry         Boolean?    @default(false)
+  iron            Boolean?    @default(false)
+  television      Boolean?    @default(false)
+  air_conditioner Boolean?    @default(false)
+  wifi            Boolean?    @default(false)
+  stove           Boolean?    @default(false)
+  parking         Boolean?    @default(false)
+  images          String?     @db.VarChar(255)
+  book_room       book_room[]
+  users           users?      @relation(fields: [passenger_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "rooms_ibfk_1")
+
+  @@index([passenger_id], map: "passenger_id")
+}
+
+model users {
+  id        Int          @id @default(autoincrement())
+  gender    users_gender
+  username  String?      @db.VarChar(255)
+  email     String?      @db.VarChar(255)
+  pass_word String?      @db.VarChar(255)
+  phone     String?      @db.VarChar(255)
+  birthday  String?      @db.VarChar(255)
+  role      String?      @db.VarChar(255)
+  book_room book_room[]
+  rooms     rooms[]
+}
+
+enum users_gender {
+  MALE
+  FEMALE
+  OTHER
+}

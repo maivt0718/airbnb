@@ -97,3 +97,39 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 ## License
 
 Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+
+### Overview
+
+## Componets
+
+# Controller
+
+- to receive specific requests for the application (working as router in Nodejs)
+- Definition:
+
+* Using classes and decorator
+
+- Routing:
+
+* the @Controller() decorator - to group a set of related routes and specify an optional route path prefix
+* the @Get, @Post, @Delete, @Put tells Nest to create a handler for a specific endpoint for HTTP requests
+
+```
+@Controller('cats')
+export class CatsController {
+ @Get()
+ findAll(): string {
+   return 'This action returns all cats';
+ }
+}
+```
+
+* Response: 2 options to manipulate the responses: standards and library-specific (findAll(@Res() response))
+* request payload
+
+# Provider
+- Controllers should handle HTTP requests and delegate more complex tasks to providers (working as controller in NodeJS)
+- The main idea of a provider is that it can be injected as a dependency; this means objects can create various relationships with each other, and the function of "wiring up" these objects can largely be delegated to the Nest runtime system.
+
+
+
