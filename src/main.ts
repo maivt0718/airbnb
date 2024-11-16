@@ -12,10 +12,11 @@ async function bootstrap() {
     .setTitle(`API AirBNB`)
     .setDescription('List AirBNB API')
     .setVersion('1.0')
+    .addBearerAuth()
     .build(); //builder pattern
 
   const swagger = SwaggerModule.createDocument(app,configSwagger)
-  SwaggerModule.setup("swagger",app, swagger)
+  SwaggerModule.setup("/",app, swagger)
   await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();
