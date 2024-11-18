@@ -131,5 +131,31 @@ export class CatsController {
 - Controllers should handle HTTP requests and delegate more complex tasks to providers (working as controller in NodeJS)
 - The main idea of a provider is that it can be injected as a dependency; this means objects can create various relationships with each other, and the function of "wiring up" these objects can largely be delegated to the Nest runtime system.
 
+# Module
+The @Module() decorator in NestJS is used to organize the structure of your application by defining a module. Modules can import other modules, provide services, and define which controllers are available in a given module
+
+Key Parts of @Module() Decorator
+- imports:
+
+Used to import other modules that this module depends on.
+Imported modules allow you to use the services, controllers, and other components they export.
+If a module is not imported, you won’t have access to the components it contains.
+
+- providers:
+
+Define the services or providers that are part of this module. Providers are classes (often services) that can be injected into other services or controllers using NestJS’s Dependency Injection system.
+These providers can include services, custom factories, or anything that can be registered as a provider.
+providers are only available within the scope of the current module unless they are explicitly exported.
+
+- controllers:
+
+Specify the controllers (which are responsible for handling incoming HTTP requests) in the module.
+These controllers are endpoints that are available when this module is imported or used.
+
+- exports:
+
+Specify which providers from this module are available to other modules when they import this module.
+If a provider is not exported, it cannot be injected into a class in another module.
+
 
 

@@ -6,6 +6,7 @@ import {ApiTags} from "@nestjs/swagger"
 import { loginDto } from './dto/login.dto';
 import { Response } from 'express';
 import { AuthGuard } from '@nestjs/passport';
+import { signUpDto } from './dto/signup.dto';
 
 @ApiTags(`Authentication session`)
 @Controller('auth')
@@ -20,6 +21,19 @@ export class AuthController {
     try {
       const result = await this.authService.loginAirBNB(body)
       return res.status(HttpStatus.OK).json(result)
+    } catch (error) {
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({message: error.message})
+    }
+  }
+
+  @Post('/signup')
+  async signUp(
+    @Body() body: signUpDto,
+    @Res() res: Response
+  ):Promise<Response<string>>{
+    try {
+      const newUser = await this.authService.signUpAirBNB(body)
+      return res.status(HttpStatus.CREATED).json(newUser)
     } catch (error) {
       return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({message: error.message})
     }
