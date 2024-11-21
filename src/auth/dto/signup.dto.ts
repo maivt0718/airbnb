@@ -40,6 +40,6 @@ export class signUpDto {
   })
   birthday: string;
 
-  @ApiProperty()
+  @ApiProperty({default: "user"})
   role: string;
 }

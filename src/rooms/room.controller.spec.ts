@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { BookRoomController } from './book_room.controller';
-import { BookRoomService } from './book_room.service';
+import { BookRoomController } from './room.controller';
+import { BookRoomService } from './room.service';
 
 describe('BookRoomController', () => {
   let controller: BookRoomController;

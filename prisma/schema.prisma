@@ -36,6 +36,7 @@ model location {
   province      String? @db.VarChar(255)
   country       String? @db.VarChar(255)
   images        String? @db.VarChar(255)
+  rooms         rooms[]
 }
 
 model rooms {
@@ -57,6 +58,8 @@ model rooms {
   images          String?     @db.VarChar(255)
   book_room       book_room[]
   users           users?      @relation(fields: [passenger_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "rooms_ibfk_1")
+  location_id      Int?       @default(1)
+  location        location?   @relation(fields: [location_id], references: [id])
 
   @@index([passenger_id], map: "passenger_id")
 }
