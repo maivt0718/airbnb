@@ -32,14 +32,8 @@ export class RoomService {
 
   async postRoom(body: roomDto, files: Express.Multer.File[]): Promise<rooms> {
     try {
-      let {
-        passenger_id,
-        room_name,
-        room_number,
-        location_id,
-        images,
-        ...restOfBody
-      } = body;
+      let { passenger_id, room_name, room_number, location_id, ...restOfBody } =
+        body;
 
       let checkRoom = await this.PrismaService.rooms.findFirst({
         where: { OR: [{ room_name }, { room_number }] },
@@ -82,55 +76,73 @@ export class RoomService {
       throw new Error(error);
     }
   }
-  async updateRoom(id: number, body: roomDto): Promise<rooms> {
+  async updateRoom(
+    id: number,
+    body: roomDto,
+    files: Express.Multer.File[],
+  ): Promise<rooms> {
     try {
       let { images, passenger_id, location_id, ...restOfBody } = body;
 
-      let checkRoom = await this.PrismaService.rooms.findFirst({
-        where: { id },
-      });
+      if (passenger_id) {
+        let checkRoom = await this.PrismaService.rooms.findFirst({
+          where: { id },
+        });
 
-      if (!checkRoom) {
-        throw new BadRequestException('Room doesnt exist');
+        if (!checkRoom) {
+          throw new BadRequestException('Room doesnt exist');
+        }
       }
 
-      let checkUser = await this.PrismaService.users.findFirst({
-        where: { id: Number(passenger_id) },
-      });
+      if (passenger_id) {
+        let checkUser = await this.PrismaService.users.findFirst({
+          where: { id: Number(passenger_id) },
+        });
 
-      if (!checkUser) {
-        throw new BadRequestException('Users doesnt exist');
+        if (!checkUser) {
+          throw new BadRequestException('Users doesnt exist');
+        }
       }
 
-      let checkLocation = await this.PrismaService.location.findFirst({
-        where: { id: Number(location_id) },
-      });
+      if (location_id) {
+        let checkLocation = await this.PrismaService.location.findFirst({
+          where: { id: Number(location_id) },
+        });
 
-      if (!checkLocation) {
-        throw new BadRequestException('Location doesnt exist');
+        if (!checkLocation) {
+          throw new BadRequestException('Location doesnt exist');
+        }
       }
 
       let image_url = '';
 
-      if (images && images.length == 1) {
-        let data = await this.cloudinary.uploadDocument(images, 'roomsFolders');
+      if (files && files.length == 1) {
+        let data = await this.cloudinary.uploadDocument(files, 'roomsFolders');
         image_url = data[0].url;
       }
-      if (images.length > 1) {
+      if (files.length > 1) {
         throw new BadRequestException('Only one image is allowed');
       }
+
+      let filteredRestBody = Object.fromEntries(
+        Object.entries(restOfBody || {}).filter(
+          ([_, value]) => value !== '' && value !== undefined,
+        ),
+      );
+
+      console.log(filteredRestBody);
 
       let newData = await this.PrismaService.rooms.update({
         where: { id },
         data: {
-          ...restOfBody,
+          ...filteredRestBody,
           ...(location_id && {
             location: { connect: { id: Number(location_id) } },
           }),
           ...(passenger_id && {
             users: { connect: { id: Number(passenger_id) } },
           }),
-          images: '',
+          ...(image_url && { images: image_url }),
         },
       });
       return newData;

@@ -100,14 +100,20 @@ export class RoomController {
   @UseGuards(AuthGuard('jwtStrategy'))
   @ApiHeader({ name: 'custom_token', required: false })
   @ApiConsumes('multipart/form-data', 'application/json')
+  @UseInterceptors(FilesInterceptor('images'))
   @Put('/putRoom/:id')
+  @ApiBody({type: roomDto, required: false})
   async putRoom(
     @Res() res: Response,
     @Body() body: roomDto,
     @Param('id') id: string,
+    @UploadedFiles() files: Express.Multer.File[],
   ): Promise<Response<rooms>> {
     try {
-      let data = await this.RoomService.updateRoom(Number(id), body);
+      this.convertBooleans(body);
+      this.convertImages(body);
+      this.convertNumbers(body)
+      let data = await this.RoomService.updateRoom(Number(id), body, files);
       return res.status(HttpStatus.OK).json({ message: data });
     } catch (error) {
       return res
@@ -117,7 +123,7 @@ export class RoomController {
   }
 
   @ApiBearerAuth()
-  // @UseGuards(AuthGuard('jwtStrategy'))
+  @UseGuards(AuthGuard('jwtStrategy'))
   @ApiHeader({ name: 'custom_token', required: false })
   @ApiBody({ type: roomDto })
   @ApiConsumes('multipart/form-data', 'application/json')

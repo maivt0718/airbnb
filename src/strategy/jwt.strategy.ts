@@ -17,7 +17,6 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwtStrategy') {
     });
   }
   async validate(tokenDecode: any) {
-    console.log(tokenDecode);
     let checkUser = await this.PrismaService.users.findFirst({
       where: {
         username: tokenDecode.username,

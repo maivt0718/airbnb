@@ -40,7 +40,7 @@ export class roomDto {
   @IsNumberString()
   bathroom: number;
 
-  @ApiProperty({ default: '' })
+  @ApiProperty({ default: '', required: false })
   @IsString()
   description: string;
 

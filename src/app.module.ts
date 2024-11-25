@@ -7,6 +7,7 @@ import { CommentsModule } from './comments/comments.module';
 import { RoomModule } from './rooms/room.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { SharedModule } from './shared/shared.module';
+import { BookRoomModule } from './book_room/book_room.module';
 
 @Module({
   imports: [
@@ -17,7 +18,8 @@ import { SharedModule } from './shared/shared.module';
     CommentsModule,
     RoomModule,
     PrismaModule,
-    SharedModule
+    SharedModule,
+    BookRoomModule
   ],
   controllers: [AppController],
   providers: [AppService],
