@@ -35,8 +35,8 @@ export class signUpDto {
 
   @IsNotEmpty()
   @ApiProperty()
-  @Matches(/^(\d{4})\/(\d{1,2})\/(\d{1,2})$/, {
-    message: 'Birthday must be in the format YYYY/MM/DD',
+  @Matches(/^(\d{4})\-(\d{1,2})\-(\d{1,2})$/, {
+    message: 'Birthday must be in the format YYYY-MM-DD',
   })
   birthday: string;
 

@@ -49,8 +49,7 @@ export class AuthService {
 
   async signUpAirBNB(body: signUpDto): Promise<string>{
     try {
-      let { email, password, username, gender, birthday, role = "user" } = body
-      console.log(`Role: ${role}`)
+      let { email, username, password, ...restOfBody } = body
       let checkUser = await this.prisma.users.findFirst({
         where: {
           OR:[
@@ -67,11 +66,9 @@ export class AuthService {
       let newUser = await this.prisma.users.create({
         data:{
           email,
-          pass_word: bcrypt.hashSync(password, 10),
-          role,
-          gender,
           username,
-          birthday
+          pass_word: bcrypt.hashSync(password, 10),
+          ...restOfBody
         }
       })
       return `User ${newUser.username} is created`
