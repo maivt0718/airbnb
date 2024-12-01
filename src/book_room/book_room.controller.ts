@@ -28,7 +28,7 @@ export class BookRoomController {
 
   @Post('/postBookRoom')
   @ApiBearerAuth()
-  // @UseGuards(AuthGuard('jwtStrategy'))
+  @UseGuards(AuthGuard('jwtStrategy'))
   @ApiHeader({ name: 'custom_token', required: false })
   async create(
     @Body() createBookRoomDto: BookRoomDto,
@@ -61,7 +61,7 @@ export class BookRoomController {
 
   @Get(':id')
   @ApiBearerAuth()
-  // @UseGuards(AuthGuard('jwtStrategy'))
+  @UseGuards(AuthGuard('jwtStrategy'))
   @ApiHeader({ name: 'custom_token', required: false })
   async findOne(
     @Res() res: Response,
@@ -79,7 +79,7 @@ export class BookRoomController {
 
   @Patch(':id')
   @ApiBearerAuth()
-  // @UseGuards(AuthGuard('jwtStrategy'))
+  @UseGuards(AuthGuard('jwtStrategy'))
   @ApiHeader({ name: 'custom_token', required: false })
   async update(
     @Param('id') id: string,
@@ -98,7 +98,7 @@ export class BookRoomController {
 
   @Delete(':id')
   @ApiBearerAuth()
-  // @UseGuards(AuthGuard('jwtStrategy'))
+  @UseGuards(AuthGuard('jwtStrategy'))
   @ApiHeader({ name: 'custom_token', required: false })
   async remove(
     @Param('id') id: string,
