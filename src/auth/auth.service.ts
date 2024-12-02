@@ -5,6 +5,7 @@ import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { signUpDto } from './dto/signup.dto';
 import * as bcrypt from 'bcrypt'
+import { KeyService } from 'src/key/key.services';
 @Injectable()
 export class AuthService {
   prisma = new PrismaClient();
@@ -12,6 +13,7 @@ export class AuthService {
   constructor(
     private jwtService: JwtService,
     private configService: ConfigService,
+    private keyService: KeyService
   ) {}
 
   async loginAirBNB(body: loginDto): Promise<string> {
@@ -39,7 +41,11 @@ export class AuthService {
             username: checUser.username
           },
         },
-        { expiresIn: '30m', secret: this.configService.get('SECRET_KEY') },
+        { expiresIn: '30m', 
+          // secret: this.configService.get('SECRET_KEY'), 
+          privateKey: this.keyService.getKey('access_token.private.key'),
+          algorithm: 'RS256'
+        },
       );
       return token;
     } catch (error) {
