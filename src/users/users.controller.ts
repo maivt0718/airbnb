@@ -29,7 +29,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { Response } from 'express';
 import { usersDto } from './dto/users.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { CloudUploadService } from 'src/shared/cloudinaryUpload.service';
+import { CloudUploadService } from '../shared/cloudinaryUpload.service';
 
 @ApiTags('Users')
 @Controller('users')
@@ -170,7 +170,9 @@ export class UsersController {
       );
       return res.status(HttpStatus.OK).json(user);
     } catch (error) {
-      return res.status(HttpStatus.INTERNAL_SERVER_ERROR);
+      return res
+        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .json({ message: error.message });
     }
   }
 

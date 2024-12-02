@@ -1,21 +1,22 @@
-import { users_gender } from '@prisma/client';
+// import { users_gender } from '@prisma/client';
 import { Expose } from 'class-transformer';
 
 export class usersDto {
   @Expose()
   id: number;
   @Expose()
-  name: string;
+  username: string;
   @Expose()
   email: string;
   @Expose()
-  password: string;
+  pass_word: string;
   @Expose()
   phone: string;
   @Expose()
   birthday: string;
   @Expose()
-  gender: users_gender;
+  // gender: users_gender
+  gender: string;
   @Expose()
   role: string;
 

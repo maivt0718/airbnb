@@ -1,6 +1,7 @@
+import { GenderUser } from './../enum/gender.enum';
 import { ApiProperty } from '@nestjs/swagger';
 import { users_gender } from '@prisma/client';
-import { IsEmail, IsNotEmpty } from 'class-validator';
+import { IsEmail, IsEnum, IsNotEmpty } from 'class-validator';
 
 export class CreateUserDto {
   @IsNotEmpty({ message: 'username Không được để trống' })
@@ -24,8 +25,9 @@ export class CreateUserDto {
   birthday: string;
 
   @IsNotEmpty({ message: 'gender không được để trống' })
+  @IsEnum(GenderUser)
   @ApiProperty()
-  gender: users_gender;
+  gender: users_gender; // Change the type of gender to users_gender
 
   @IsNotEmpty({ message: 'role không được để trống' })
   @ApiProperty()
