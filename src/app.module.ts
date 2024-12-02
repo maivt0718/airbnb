@@ -8,6 +8,8 @@ import { RoomModule } from './rooms/room.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { SharedModule } from './shared/shared.module';
 import { BookRoomModule } from './book_room/book_room.module';
+import { UsersModule } from './users/users.module';
+import { LocationModule } from './location/location.module';
 
 @Module({
   imports: [
@@ -19,7 +21,9 @@ import { BookRoomModule } from './book_room/book_room.module';
     RoomModule,
     PrismaModule,
     SharedModule,
-    BookRoomModule
+    BookRoomModule,
+    UsersModule,
+    LocationModule
   ],
   controllers: [AppController],
   providers: [AppService],

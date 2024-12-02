@@ -7,20 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model book_room {
-  id                 Int       @id @default(autoincrement())
-  room_id            Int?
-  check_in_datetime  DateTime? @default(now()) @db.Timestamp(0)
-  check_out_datetime DateTime? @default(now()) @db.Timestamp(0)
-  quantity_of_people Int?
-  booking_user       Int?
-  rooms              rooms?    @relation(fields: [room_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "book_room_ibfk_1")
-  users              users?    @relation(fields: [booking_user], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "book_room_ibfk_2")
-
-  @@index([booking_user], map: "booking_user")
-  @@index([room_id], map: "room_id")
-}
-
 model comments {
   id           Int       @id @default(autoincrement())
   working_code Int?
@@ -36,13 +22,11 @@ model location {
   province      String? @db.VarChar(255)
   country       String? @db.VarChar(255)
   images        String? @db.VarChar(255)
-  rooms         rooms[]
 }
 
 model rooms {
   id              Int         @id @default(autoincrement())
   room_name       String?     @db.VarChar(255)
-  passenger_id    Int?
   room_number     Int?
   bed             Int?
   bathroom        Int?
@@ -56,10 +40,10 @@ model rooms {
   stove           Boolean?    @default(false)
   parking         Boolean?    @default(false)
   images          String?     @db.VarChar(255)
+  passenger_id    Int?
+  location_id     Int?
   book_room       book_room[]
   users           users?      @relation(fields: [passenger_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "rooms_ibfk_1")
-  location_id      Int?       @default(1)
-  location        location?   @relation(fields: [location_id], references: [id])
 
   @@index([passenger_id], map: "passenger_id")
 }
@@ -75,6 +59,20 @@ model users {
   role      String?      @db.VarChar(255)
   book_room book_room[]
   rooms     rooms[]
+}
+
+model book_room {
+  id                 Int       @id @default(autoincrement())
+  room_id            Int?
+  check_in_datetime  DateTime? @default(now()) @db.DateTime(0)
+  check_out_datetime DateTime? @default(now()) @db.DateTime(0)
+  quantity_of_people Int?
+  booking_user       Int?
+  rooms              rooms?    @relation(fields: [room_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "book_room_ibfk_1")
+  users              users?    @relation(fields: [booking_user], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "book_room_ibfk_2")
+
+  @@index([booking_user], map: "booking_user")
+  @@index([room_id], map: "room_id")
 }
 
 enum users_gender {
