@@ -7,12 +7,14 @@ import { CloudUploadService } from '../shared/cloudinaryUpload.service';
 import { cloudinaryProvider } from '../cloudinary/cloudinary.provider';
 import { HttpStatus } from '@nestjs/common';
 import { users_gender } from '@prisma/client';
-// import { usersDto } from './dto/users.dto';
-// import { CreateUserDto } from './dto/create-user.dto';
+import { usersDto } from './dto/users.dto';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 describe('UsersController', () => {
   let controller: UsersController;
   let service: UsersService;
+  let mockUserService: jest.Mocked<UsersService>;
   const responseMock = {
     status: jest.fn().mockReturnThis(),
     json: jest.fn(),
@@ -30,16 +32,16 @@ describe('UsersController', () => {
   };
 
   const mockUsersArray = [mockUsers];
-  const mockUserService = {
+  mockUserService = {
     getAllUsers: jest.fn().mockResolvedValue(mockUsersArray),
-    create: jest.fn(),
+    postUsers: jest.fn(),
     searchPagination: jest.fn().mockResolvedValue(mockUsersArray),
     getUser: jest.fn().mockResolvedValue(mockUsers),
     updateUser: jest.fn(),
-    searchUser: jest.fn().mockResolvedValue(mockUsersArray),
+    searchUserName: jest.fn().mockResolvedValue(mockUsersArray),
 
     // còn những chức năng khác create, put, delete ...
-  };
+  } as unknown as jest.Mocked<UsersService>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -89,40 +91,40 @@ describe('UsersController', () => {
     });
   });
 
-  // describe('create', () => {
-  //   it('should create a new user', async () => {
-  //     // Tạo thông tin người dùng mới
-  //     const newUser = {
-  //       gender: users_gender.MALE,
-  //       username: 'oliver_wilson',
-  //       email: 'oliver@example.com',
-  //       pass_word: 'password123',
-  //       phone: '1234567895',
-  //       birthday: '1993-11-09',
-  //       role: 'user',
-  //     };
+  describe('create', () => {
+    it('should create a new user', async () => {
+      // Tạo thông tin người dùng mới
+      const newUser = {
+        id: 100,
+        gender: users_gender.MALE,
+        username: 'oliver_wilson',
+        email: 'oliver@example.com',
+        pass_word: 'password123',
+        phone: '1234567895',
+        birthday: '1993-11-09',
+        role: 'user',
+      };
 
-  //     // Mock kết quả trả về của phương thức create
-  //     mockUserService.create.mockResolvedValue(newUser);
+      // Mock kết quả trả về của phương thức create
+      mockUserService.postUsers.mockResolvedValue(newUser);
 
-  //     // Gọi phương thức create của controller với newUser như CreateUserDto
-  //     await controller.create(newUser as CreateUserDto, responseMock);
+      // Gọi phương thức create của controller với newUser như CreateUserDto
+      await controller.create(newUser as CreateUserDto, responseMock);
 
-  //     // Kiểm tra xem phương thức create đã được gọi với newUser như mong đợi
-  //     expect(mockUserService.create).toHaveBeenCalledWith(
-  //       expect.objectContaining(newUser),
-  //     );
+      // Kiểm tra xem phương thức create đã được gọi với newUser như mong đợi
+      expect(mockUserService.postUsers).toHaveBeenCalledWith(
+        expect.objectContaining(newUser),
+      );
 
-  //     // Kiểm tra xem trạng thái của response đã được set là HttpStatus.CREATED
-  //     expect(responseMock.status).toHaveBeenCalledWith(HttpStatus.CREATED);
+      // Kiểm tra xem trạng thái của response đã được set là HttpStatus.CREATED
+      expect(responseMock.status).toHaveBeenCalledWith(HttpStatus.CREATED);
 
-  //     // Kiểm tra xem JSON của response đã được gọi với đối tượng newUser
-  //     expect(responseMock.json).toHaveBeenCalledWith({
-  //       message: newUser,
-  //     });
-  //   });
-  // });
-  //
+      // Kiểm tra xem JSON của response đã được gọi với đối tượng newUser
+      expect(responseMock.json).toHaveBeenCalledWith({
+        message: newUser,
+      });
+    });
+  });
 
   describe('searchPaginationUser', () => {
     it('should return paginated users and a status of 200', async () => {
@@ -213,53 +215,59 @@ describe('UsersController', () => {
   });
   //
 
-  // describe('updateUser', () => {
-  //   it('should update a user by id', async () => {
-  //     const mockUserId = '1';
-  //     const mockUpdateUserDto = {
-  //       id: 1,
-  //       pass_word: 'password123',
-  //       username: 'UpdatedUsername',
-  //       gender: users_gender.FEMALE,
-  //       email: 'updated@example.com',
-  //       phone: '9876543210',
-  //       birthday: '1995-10-20',
-  //       role: 'admin',
-  //     };
+  describe('updateUser', () => {
+    it('should update a user by id', async () => {
+      const newUpdateUser = {
+        id: 1,
+        pass_word: 'password123',
+        username: 'UpdatedUsername',
+        gender: users_gender.FEMALE,
+        email: 'updated@example.com',
+        phone: '9876543210',
+        birthday: '1995-10-20',
+        role: 'admin',
+      };
+      // Mock kết quả trả về của phương thức create
+      mockUserService.updateUser.mockResolvedValue(newUpdateUser);
 
-  //     jest.spyOn(service, 'updateUser').mockResolvedValue(mockUpdateUserDto);
+      // Gọi phương thức create của controller với newUpdateUser như CreateUserDto
+      await controller.update(
+        String(newUpdateUser.id),
+        newUpdateUser as UpdateUserDto,
+        responseMock,
+      );
 
-  //     // Gọi phương thức với id giả định và response mock
-  //     await controller.update(mockUserId, mockUpdateUserDto, responseMock);
+      // Kiểm tra xem phương thức create đã được gọi với newUpdateUser như mong đợi
+      expect(mockUserService.updateUser).toHaveBeenCalledWith(
+        newUpdateUser.id,
+        expect.objectContaining(newUpdateUser),
+      );
 
-  //     // Kiểm tra xem phản hồi đã được gọi với người dùng đúng không
-  //     expect(responseMock.status).toHaveBeenCalledWith(HttpStatus.OK);
-  //     expect(responseMock.json).toHaveBeenCalledWith({
-  //       user: expect.objectContaining(mockUpdateUserDto),
-  //     });
-  //   });
-  // });
-  //
+      // Kiểm tra xem phản hồi đã được gọi với người dùng đúng không
+      expect(responseMock.status).toHaveBeenCalledWith(HttpStatus.OK);
+      expect(responseMock.json).toHaveBeenCalledWith({
+        message: newUpdateUser,
+      });
+    });
+  });
 
-  // describe('searchUser', () => {
-  //   it('should return user when found', async () => {
-  //     const mockUsername = 'diana_wilson';
-  //     jest.spyOn(service, 'searchUser').mockResolvedValue(mockUsersArray);
+  it('should return user when found', async () => {
+    const mockUsername = 'diana_wilson';
+    mockUserService.searchUserName.mockResolvedValue(mockUsersArray);
 
-  //     await controller.searchUser(mockUsername, responseMock);
-  //     expect(responseMock.status).toHaveBeenCalledWith(HttpStatus.OK);
-  //     expect(responseMock.json).toHaveBeenCalledWith(mockUsersArray);
-  //   });
+    await controller.searchUser(mockUsername, responseMock);
 
-  //   // Thêm các test case khác tương tự như trên
-  // });
+    expect(mockUserService.searchUserName).toHaveBeenCalledWith(mockUsername);
+    expect(responseMock.status).toHaveBeenCalledWith(HttpStatus.OK);
+    expect(responseMock.json).toHaveBeenCalledWith(mockUsersArray);
+  });
 });
 
 // @Get('/getAllUsers') //done
-// @Post('/createUser') //failed
-// @Delete('deleteUser/:id')
+// @Post('/createUser') //done
+// @Delete('deleteUser/:id') 
 // @Get('/searchPagination') done
 // @Get('getUser/:id') done
-// @Put('/updateUser/:id') FAILED
-// @Get('/searchUser') failed
+// @Put('/updateUser/:id') done
+// @Get('/searchUser') done
 // @Post('/upload-user-cloud')
